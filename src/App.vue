@@ -17,6 +17,9 @@ const submitForm = () => {
     isGenerated.value = true
   } else {
     isInvalid.value = true
+    setTimeout(() => {
+    isInvalid.value = false;
+  }, 2000);
   }
 }
 
@@ -43,7 +46,7 @@ const copyToClipboard = () => {
           <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
         </svg>
         Generate
-      </button><br/>
+      </button>
       <span v-if="isInvalid" style="color: red;">Invalid Link!</span>
     </div><br/>
     <div>
@@ -108,10 +111,13 @@ const copyToClipboard = () => {
   padding-top: 50px;
   font-family: 'Google Sans Code', monospace;
   max-width: 400px;
+
+  overflow: hidden;
 }
 
 h1 {
   text-align: center;
+  font-size: 24px;
 }
 
 div {
@@ -122,7 +128,7 @@ input {
   color: whitesmoke;
   font-family: 'Google Sans Code', monospace;
   margin-top: 10px;
-  width: 100%;
+  width: 80%;
 }
 
 #generatedField {
@@ -161,7 +167,7 @@ button:hover {
 }
 
 footer {
-  margin-top: 9rem; 
+  margin-top: 12rem; 
   width: 100%;
 
   text-align: center;
