@@ -12,4 +12,4 @@ npm install
 
 That's all, have fun using this website!
 
-![Website Screenshot](/website-screenshot.png)
+![Website Screenshot](public/website-screenshot.png)
