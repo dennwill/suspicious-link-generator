@@ -7,6 +7,7 @@ const inputLink = ref('')
 const generatedLink = ref('')
 const isGenerated = ref(false)
 const isInvalid = ref(false)
+const isCopied = ref(false)
 
 const submitForm = () => {
   if (inputLink.value.trim && inputLink.value.length > 0) {
@@ -21,6 +22,10 @@ const submitForm = () => {
 
 const copyToClipboard = () => {
   navigator.clipboard.writeText(generatedLink.value)
+  isCopied.value = true;
+  setTimeout(() => {
+    isCopied.value = false;
+  }, 2000);
 }
 </script>
 
@@ -65,6 +70,7 @@ const copyToClipboard = () => {
         </svg>
         Copy To Clipboard
       </button>
+      <span v-if="isCopied">Copied to clipboard!</span>
     </div>
     <footer>
       My Github:
@@ -155,7 +161,7 @@ button:hover {
 }
 
 footer {
-  margin-top: 10rem; 
+  margin-top: 9rem; 
   width: 100%;
 
   text-align: center;
