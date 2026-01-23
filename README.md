@@ -11,3 +11,5 @@ npm install
 ```
 
 That's all, have fun using this website!
+
+![Website Screenshot](/website-screenshot.png)
