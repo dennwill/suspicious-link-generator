@@ -1,7 +1,6 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { generateShadyLink } from '../utils/shadyGenerator';
-import { useRouter } from 'vue-router';
 
 const inputLink = ref('')
 const generatedLink = ref('')
@@ -9,6 +8,32 @@ const isGenerated = ref(false)
 const isInvalid = ref(false)
 const isCopied = ref(false)
 
+// Title for typewriter effect
+const displayedTitle = ref('')
+const fullTitle = 'Suspicious Link Generator 🕵️'
+
+// Mouse tracker
+const x = ref(0);
+const y = ref(0);
+const updateMouse = (e) => {
+  x.value = e.clientX;
+  y.value = e.clientY;
+};
+
+onMounted(() => window.addEventListener('mousemove', updateMouse));
+onUnmounted(() => window.removeEventListener('mousemove', updateMouse));
+
+onMounted(() => {
+  let index = 0
+  const typeInterval = setInterval(() => {
+    if (index < fullTitle.length) {
+      displayedTitle.value += fullTitle[index]
+      index++
+    } else {
+      clearInterval(typeInterval)
+    }
+  }, 50)
+})
 const submitForm = () => {
   if (inputLink.value.trim && inputLink.value.length > 0) {
     isInvalid.value = false
@@ -33,12 +58,17 @@ const copyToClipboard = () => {
 </script>
 
 <template>
+  <div 
+    class="custom-cursor"
+    :style="{ left: x + 'px', top: y + 'px' }"
+  ></div>
   <div v-if="$route.path === '/'">
-    <h1>Suspicious Link Generator</h1>
+    <h1 class="typing">{{ displayedTitle }}<span class="cursor"></span></h1>
+    
     <div>
       <span>Paste your link here:</span><br/>
       <input type="text" v-model="inputLink" /><br/>
-      
+      <label for="inputLink" style="opacity: 0.5; font-size: 12px;">e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ</label>
       
       <button v-on:click="submitForm">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -88,12 +118,7 @@ const copyToClipboard = () => {
     </footer>
   </div>
 
-  
   <router-view v-else />
-
-  
-
-
 </template>
 
 <style scoped>
@@ -101,16 +126,20 @@ const copyToClipboard = () => {
 
 :global(body) {
   background-color: black;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/background-image.jpg');
+  background-image: linear-gradient(rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.8)), url('/background-image.jpg');
   color: white;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   margin: 0 auto;
-  padding-top: 50px;
+  padding: 0;
   font-family: 'Google Sans Code', monospace;
   max-width: 400px;
+  min-height: 100vh;
+  width: 100%;
 
   overflow: hidden;
 }
@@ -118,6 +147,8 @@ const copyToClipboard = () => {
 h1 {
   text-align: center;
   font-size: 24px;
+  white-space: nowrap;
+  min-height: 1.2em;
 }
 
 div {
@@ -128,7 +159,11 @@ input {
   color: whitesmoke;
   font-family: 'Google Sans Code', monospace;
   margin-top: 10px;
-  width: 80%;
+  width: 100%;
+  max-width: 9cm;
+  padding: 10px;
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 
 #generatedField {
@@ -167,7 +202,7 @@ button:hover {
 }
 
 footer {
-  margin-top: 12rem; 
+  margin-top: 8rem; 
   width: 100%;
 
   text-align: center;
@@ -180,4 +215,108 @@ footer {
 img:hover {
   filter:opacity(0.6)
 }
+
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: white;
+  margin-left: 4px;
+  animation: blink 1s infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.custom-cursor {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0) 70%);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@media (max-width: 768px) {
+  :global(body) {
+    max-width: 100%;
+    padding: 20px;
+    padding-top: 0;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  input {
+    width: 90%;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 14px;
+    gap: 8px;
+  }
+
+  footer {
+    margin-top: 4rem;
+    font-size: 10px;
+  }
+
+  .custom-cursor {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  :global(body) {
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  span {
+    font-size: 14px;
+  }
+
+  input {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+    margin-top: 8px;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  button svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  footer {
+    margin-top: 2rem;
+    padding: 12px 0;
+  }
+
+  label {
+    font-size: 10px !important;
+  }
+}
 </style>
+
